@@ -1,0 +1,23 @@
+services:
+  api:
+    build: .
+    container_name: cyber-threat-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - qdrant
+    environment:
+      - QDRANT_PATH=/app/qdrant_data
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: cyber-threat-qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+
+volumes:
+  qdrant_storage:

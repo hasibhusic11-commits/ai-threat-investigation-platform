@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual env / local env
+venv/
+.env
+.env.*
+!.env.example
+
+# Runtime data
+data/*.jsonl
+data/*.json
+data/suricata/
+*.log
+
+# Vector db
+qdrant_data/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

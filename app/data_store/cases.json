@@ -1,0 +1,165 @@
+[
+  {
+    "case_id": "case-1",
+    "incident_id": "chain-1",
+    "title": "Incident on server-1",
+    "status": "open",
+    "priority": "high",
+    "owner": null,
+    "created_at": "2026-03-10T23:20:47.920798+00:00",
+    "updated_at": "2026-03-10T23:20:47.920826+00:00",
+    "notes": [],
+    "incident_snapshot": {
+      "incident_id": "chain-1",
+      "title": "Incident on server-1",
+      "hosts": [
+        "server-1"
+      ],
+      "users": [
+        "root"
+      ],
+      "max_risk_score": 0,
+      "suspicious_ips": []
+    }
+  },
+  {
+    "case_id": "case-2",
+    "incident_id": "chain-6",
+    "title": "Incident on ws-44",
+    "status": "open",
+    "priority": "high",
+    "owner": null,
+    "created_at": "2026-03-10T23:20:49.645079+00:00",
+    "updated_at": "2026-03-10T23:20:49.645105+00:00",
+    "notes": [],
+    "incident_snapshot": {
+      "incident_id": "chain-6",
+      "title": "Incident on ws-44",
+      "hosts": [
+        "ws-44"
+      ],
+      "users": [
+        "temp_admin"
+      ],
+      "max_risk_score": 0,
+      "suspicious_ips": []
+    }
+  },
+  {
+    "case_id": "case-3",
+    "incident_id": "chain-100",
+    "title": "Incident on server-2",
+    "status": "open",
+    "priority": "high",
+    "owner": null,
+    "created_at": "2026-03-10T23:20:50.711407+00:00",
+    "updated_at": "2026-03-10T23:20:50.711431+00:00",
+    "notes": [],
+    "incident_snapshot": {
+      "incident_id": "chain-100",
+      "title": "Incident on server-2",
+      "hosts": [
+        "server-2"
+      ],
+      "users": [
+        "root"
+      ],
+      "max_risk_score": 0,
+      "suspicious_ips": []
+    }
+  },
+  {
+    "case_id": "case-4",
+    "incident_id": "chain-6",
+    "title": "Incident on ws-44",
+    "status": "open",
+    "priority": "high",
+    "owner": null,
+    "created_at": "2026-03-10T23:22:44.234802+00:00",
+    "updated_at": "2026-03-10T23:22:44.234861+00:00",
+    "notes": [],
+    "incident_snapshot": {
+      "incident_id": "chain-6",
+      "title": "Incident on ws-44",
+      "hosts": [
+        "ws-44"
+      ],
+      "users": [
+        "temp_admin"
+      ],
+      "max_risk_score": 0,
+      "suspicious_ips": []
+    }
+  },
+  {
+    "case_id": "case-5",
+    "incident_id": "chain-6",
+    "title": "Incident on ws-44",
+    "status": "open",
+    "priority": "high",
+    "owner": null,
+    "created_at": "2026-03-10T23:22:45.263561+00:00",
+    "updated_at": "2026-03-10T23:22:45.263615+00:00",
+    "notes": [],
+    "incident_snapshot": {
+      "incident_id": "chain-6",
+      "title": "Incident on ws-44",
+      "hosts": [
+        "ws-44"
+      ],
+      "users": [
+        "temp_admin"
+      ],
+      "max_risk_score": 0,
+      "suspicious_ips": []
+    }
+  },
+  {
+    "case_id": "case-6",
+    "incident_id": "chain-1",
+    "title": "Incident on server-1",
+    "status": "open",
+    "priority": "high",
+    "owner": null,
+    "created_at": "2026-03-12T17:53:13.824422+00:00",
+    "updated_at": "2026-03-12T17:53:13.824454+00:00",
+    "notes": [],
+    "incident_snapshot": {
+      "incident_id": "chain-1",
+      "title": "Incident on server-1",
+      "hosts": [
+        "server-1"
+      ],
+      "users": [
+        "root"
+      ],
+      "max_risk_score": 0,
+      "suspicious_ips": [],
+      "event_count": 5
+    }
+  },
+  {
+    "case_id": "case-7",
+    "incident_id": "chain-1",
+    "title": "Incident on server-1",
+    "status": "open",
+    "priority": "high",
+    "owner": null,
+    "created_at": "2026-03-12T17:53:15.608025+00:00",
+    "updated_at": "2026-03-12T17:53:15.608052+00:00",
+    "notes": [],
+    "incident_snapshot": {
+      "incident_id": "chain-1",
+      "title": "Incident on server-1",
+      "hosts": [
+        "server-1"
+      ],
+      "users": [
+        "root"
+      ],
+      "max_risk_score": 0,
+      "suspicious_ips": [],
+      "event_count": 5
+    }
+  }
+]
