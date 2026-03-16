@@ -19,13 +19,14 @@ from app.config import DATA_FILE, SURICATA_EVE_PATH
 from app.incidents import build_incidents, filter_incidents, get_incident_by_id
 from app.ingest import ingest_logs
 from app.live_status import get_live_status, get_recent_events
+from app.llm_assistant import explain_incident_with_llm
 from app.packet_trace import build_packet_flows, trace_ip
+from app.port_scanner import run_port_scan
 from app.realtime_ingest import process_new_lines
 from app.search import search_logs
 from app.security import rate_limit, require_api_key
-from app.summarizer import summarize_chain
 
-app = FastAPI(title="AI Threat Investigation Platform", version="6.0.0")
+app = FastAPI(title="AI Threat Investigation Platform", version="7.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -68,6 +69,11 @@ class AddCaseNoteRequest(BaseModel):
     author: str | None = None
 
 
+class PortScanRequest(BaseModel):
+    target: str
+    ports: list[int] | None = None
+
+
 def load_raw_logs():
     rows = []
     if not Path(DATA_FILE).exists():
@@ -91,7 +97,7 @@ def health():
     return {
         "status": "ok",
         "service": "ai-threat-investigation-platform",
-        "version": "6.0.0",
+        "version": "7.0.0",
         "suricata_eve_path": str(SURICATA_EVE_PATH),
         "normalized_store_path": str(DATA_FILE),
     }
@@ -143,20 +149,6 @@ def search_post(request: SearchRequest):
     return {"results": search_logs(request.query, limit=request.limit)}
 
 
-@app.get("/correlate/summaries", dependencies=[Depends(rate_limit), Depends(require_api_key)])
-def correlate_summaries():
-    incidents = build_incidents()
-    return {
-        "results": [
-            {
-                "incident_id": i["incident_id"],
-                "summary": i["summary"],
-            }
-            for i in incidents
-        ]
-    }
-
-
 @app.get("/incidents", dependencies=[Depends(rate_limit), Depends(require_api_key)])
 def list_incidents_endpoint(
     min_risk_score: int | None = Query(None, ge=0, le=100),
@@ -178,11 +170,17 @@ def list_incidents_endpoint(
 @app.get("/incidents/{incident_id}", dependencies=[Depends(rate_limit), Depends(require_api_key)])
 def get_incident_endpoint(incident_id: str):
     incident = get_incident_by_id(incident_id)
-
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found")
-
     return incident
+
+
+@app.get("/ai/explain/incident/{incident_id}", dependencies=[Depends(rate_limit), Depends(require_api_key)])
+def ai_explain_incident(incident_id: str):
+    incident = get_incident_by_id(incident_id)
+    if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+    return explain_incident_with_llm(incident)
 
 
 @app.get("/dashboard/summary", dependencies=[Depends(rate_limit), Depends(require_api_key)])
@@ -195,21 +193,21 @@ def dashboard_summary():
 
     top_techniques: dict[str, int] = {}
     incidents_by_host: dict[str, int] = {}
-    risk_buckets = {"low": 0, "medium": 0, "high": 0, "critical": 0}
+    risk_buckets = {"Low": 0, "Medium": 0, "High": 0, "Critical": 0}
 
     for incident in incidents:
-        for host in incident.get("hosts", []):
-            incidents_by_host[host] = incidents_by_host.get(host, 0) + 1
+        for host_name in incident.get("hosts", []):
+            incidents_by_host[host_name] = incidents_by_host.get(host_name, 0) + 1
 
         risk = incident.get("max_risk_score", 0)
         if risk >= 75:
-            risk_buckets["critical"] += 1
+            risk_buckets["Critical"] += 1
         elif risk >= 50:
-            risk_buckets["high"] += 1
+            risk_buckets["High"] += 1
         elif risk >= 25:
-            risk_buckets["medium"] += 1
+            risk_buckets["Medium"] += 1
         else:
-            risk_buckets["low"] += 1
+            risk_buckets["Low"] += 1
 
         for technique in incident.get("mitre_techniques", []):
             name = technique.get("technique", "UNKNOWN")
@@ -234,10 +232,10 @@ def dashboard_summary():
         "top_techniques": sorted_techniques[:8],
         "incidents_by_host": sorted_hosts[:8],
         "risk_distribution": [
-            {"name": "Low", "value": risk_buckets["low"]},
-            {"name": "Medium", "value": risk_buckets["medium"]},
-            {"name": "High", "value": risk_buckets["high"]},
-            {"name": "Critical", "value": risk_buckets["critical"]},
+            {"name": "Low", "value": risk_buckets["Low"]},
+            {"name": "Medium", "value": risk_buckets["Medium"]},
+            {"name": "High", "value": risk_buckets["High"]},
+            {"name": "Critical", "value": risk_buckets["Critical"]},
         ],
         "case_summary": dashboard_case_summary(),
     }
@@ -297,5 +295,13 @@ def update_case_priority_endpoint(case_id: str, request: UpdateCasePriorityReque
 def add_case_note_endpoint(case_id: str, request: AddCaseNoteRequest):
     try:
         return add_case_note(case_id, request.note, request.author)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.post("/scan/ports", dependencies=[Depends(rate_limit), Depends(require_api_key)])
+def scan_ports(request: PortScanRequest):
+    try:
+        return run_port_scan(request.target, request.ports)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
